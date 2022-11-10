@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  edge:
+    image: placeos/edge:nightly
+    container_name: edge
+    environment:
+      - PLACE_URI=https://eu.placeos.run
+      - PLACE_EDGE_KEY=<YOUR EDGE KEY>
