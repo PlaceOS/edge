@@ -5,5 +5,5 @@ services:
     image: placeos/edge:latest
     container_name: edge
     environment:
-      - PLACE_URI=https://placeos-dev.aca.im
-      - PLACE_EDGE_KEY=8ba928b3465512ee47de48860c7ca902
+      - PLACE_URI=https://eu.placeos.run
+      - PLACE_EDGE_KEY=<YOUR EDGE KEY>
