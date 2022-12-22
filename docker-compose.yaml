@@ -4,6 +4,7 @@ services:
   edge:
     image: placeos/edge:latest
     container_name: edge
+    restart: always
     environment:
       - PLACE_URI=https://eu.placeos.run
       - PLACE_EDGE_KEY=<YOUR EDGE KEY>
