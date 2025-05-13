@@ -8,3 +8,7 @@ services:
     environment:
       - PLACE_URI=https://eu.placeos.run
       - PLACE_EDGE_KEY=<YOUR EDGE KEY>
+    logging:
+      driver: json-file
+      options:
+        max-size: 99m
