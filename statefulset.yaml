@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: edge
+  labels:
+    app.kubernetes.io/name: edge
+    app.kubernetes.io/instance: edge
+spec:
+  # must be 1 - PLACE_EDGE_KEY identifies a single edge instance to PlaceOS,
+  # so additional replicas would connect with a duplicate identity
+  replicas: 1
+  selector:
+    matchLabels:
+      edge: edge
+      app.kubernetes.io/name: edge
+      app.kubernetes.io/instance: edge
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        edge: edge
+        app.kubernetes.io/name: edge
+        app.kubernetes.io/instance: edge
+    spec:
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      securityContext:
+        fsGroup: 10001
+      terminationGracePeriodSeconds: 120
+      restartPolicy: Always
+      containers:
+      - name: edge
+        image: "docker.io/placeos/edge:latest"
+        imagePullPolicy: Always
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10001
+        env:
+          - name: PLACE_URI
+            value: "https://<PLACE_DOMAIN>"
+          - name: PLACE_EDGE_KEY
+            value: "<PLACE_EDGE_KEY>"
+          # driver processes launched by edge run their own redis
+          # healthcheck (placeos-driver protocol.cr) and terminate after two
+          # failed pings - add the clusters REDIS_URL so they stay running
+          - name: REDIS_URL
+            value: "redis://redis-headless.placeos:6379"
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 50m
+            memory: 512Mi
+        volumeMounts:
+        - name: edge
+          mountPath: /app/bin/drivers/
+        - name: tmp
+          mountPath: /tmp
+  volumeClaimTemplates:
+  - metadata:
+      name: edge
+      annotations:
+        pv.beta.kubernetes.io/gid: "10001"
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
