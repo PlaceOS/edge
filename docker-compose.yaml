@@ -4,7 +4,7 @@ services:
     container_name: edge
     restart: always
     environment:
-      - PLACE_URI=https://eu.placeos.run
+      - PLACE_URI=https://<PLACEOS DOMAIN>
       - PLACE_EDGE_KEY=<YOUR EDGE KEY>
     logging:
       driver: json-file
